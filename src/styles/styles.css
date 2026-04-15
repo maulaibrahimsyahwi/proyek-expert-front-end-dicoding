@@ -1,3 +1,19 @@
+:root {
+  --bg-body: #f8fafc;
+  --bg-surface: #ffffff;
+  --primary: #0f172a;
+  --primary-hover: #334155;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,19 +21,26 @@
 }
 
 body {
-  font-family: "Arial", sans-serif;
-  background-color: #f8f9fa;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.5;
 }
 
 .skip-link {
   position: absolute;
   top: -100px;
   left: 0;
-  background-color: #000;
-  color: white;
-  padding: 8px;
+  background-color: var(--primary);
+  color: #fff;
+  padding: 12px 24px;
   z-index: 10000;
   text-decoration: none;
+  border-radius: 0 0 var(--radius-md) 0;
+  font-weight: 500;
+  transition: top 0.3s;
 }
 
 .skip-link:focus {
@@ -25,40 +48,45 @@ body {
 }
 
 .container {
-  padding-inline: 16px;
+  padding-inline: 24px;
   margin-inline: auto;
-  max-width: 1300px;
+  max-width: 1200px;
 }
 
 header {
-  background-color: lightskyblue;
+  background-color: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .main-header {
-  min-height: 70px;
+  min-height: 72px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .brand-name {
-  font-size: 1.125rem;
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 700;
   text-decoration: none;
-  color: #333;
+  color: var(--primary);
+  letter-spacing: -0.025em;
 }
 
 .navigation-drawer {
   position: fixed;
   top: 0;
   left: -100%;
-  width: 250px;
+  width: 280px;
   height: 100vh;
-  background-color: #fff;
-  transition: transform 0.3s ease-in-out;
+  background-color: var(--bg-surface);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 9999;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 32px 24px;
+  box-shadow: var(--shadow-lg);
 }
 
 .navigation-drawer.open {
@@ -68,107 +96,195 @@ header {
 .drawer-button {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
-  padding: 10px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
 }
 
 .nav-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
 }
 
 .nav-list li a,
 .nav-list li button {
   text-decoration: none;
-  color: #333;
-  font-size: 16px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
   background: none;
   border: none;
   cursor: pointer;
   text-align: left;
   width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-list li a:hover,
+.nav-list li button:hover {
+  background-color: var(--bg-body);
+  color: var(--text-main);
 }
 
 .main-content {
-  padding-block: 20px;
+  padding-block: 40px;
   min-height: 80vh;
 }
 
 .map-container {
   height: 400px;
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  z-index: 1;
 }
 
 .story-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 24px;
+  margin-top: 24px;
 }
 
 .story-card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
 }
 
 .story-card:focus,
 .story-card:hover {
-  transform: translateY(-5px);
-  outline: 2px solid lightskyblue;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .story-card img {
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
-  border-radius: 4px;
+}
+
+.story-card h3 {
+  padding: 20px 20px 8px;
+  font-size: 1.125rem;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.story-card p {
+  padding: 0 20px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  flex-grow: 1;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
 
 .form-group label {
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-main);
+  font-size: 0.95rem;
 }
 
 .form-group input,
 .form-group textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 12px 16px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  background-color: var(--bg-surface);
+  font-size: 1rem;
+  color: var(--text-main);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  font-family: inherit;
+  width: 100% !important;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
 .btn {
-  padding: 10px 20px;
-  background-color: lightskyblue;
+  padding: 12px 24px !important;
+  background-color: var(--primary);
+  color: #ffffff;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md) !important;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1rem;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  background-color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
 }
 
 video {
   width: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background: #000;
+  box-shadow: var(--shadow-sm);
 }
 
-@media screen and (min-width: 375px) {
-  .container {
-    padding-inline: 20px;
-  }
+h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--text-main);
+  letter-spacing: -0.025em;
+}
+
+form {
+  background: var(--bg-surface);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
 }
 
 @media screen and (min-width: 768px) {
@@ -195,7 +311,11 @@ video {
   }
   .nav-list {
     flex-direction: row;
-    gap: 20px;
+    gap: 8px;
+  }
+  .nav-list li a,
+  .nav-list li button {
+    padding: 8px 16px;
   }
   .story-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -203,6 +323,46 @@ video {
   .home-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px;
+    gap: 40px;
   }
+  .map-section,
+  .list-section {
+    min-width: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(15px);
+  }
+}
+
+@keyframes slide-to-left {
+  to {
+    transform: translateX(-15px);
+  }
+}
+
+::view-transition-old(root) {
+  animation:
+    90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+
+::view-transition-new(root) {
+  animation:
+    210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
 }

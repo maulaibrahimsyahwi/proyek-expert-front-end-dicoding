@@ -10,6 +10,14 @@ export default class AddPage {
       <section class="container">
         <h2>Tambah Cerita Baru</h2>
         <form id="add-form">
+          
+          <div class="form-group">
+            <label for="file-upload">Upload Foto</label>
+            <input type="file" id="file-upload" accept="image/*" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+
+          <p style="text-align: center; margin: 10px 0; font-weight: bold;">ATAU</p>
+
           <div class="form-group">
             <label>Foto Cerita (Kamera Langsung)</label>
             <video id="camera-view" autoplay playsinline aria-label="Tampilan Kamera" style="width: 100%; border-radius: 8px; background: #000; height: 300px; object-fit: cover;"></video>
@@ -41,6 +49,7 @@ export default class AddPage {
     const canvas = document.getElementById("camera-canvas");
     const photoPreview = document.getElementById("photo-preview");
     const captureBtn = document.getElementById("capture-btn");
+    const fileUpload = document.getElementById("file-upload");
     let photoBlob = null;
 
     try {
@@ -65,10 +74,21 @@ export default class AddPage {
           photoPreview.style.display = "block";
           video.style.display = "none";
           captureBtn.style.display = "none";
+          fileUpload.value = "";
         },
         "image/jpeg",
         0.8,
       );
+    });
+
+    fileUpload.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        photoBlob = null;
+        photoPreview.src = URL.createObjectURL(e.target.files[0]);
+        photoPreview.style.display = "block";
+        video.style.display = "none";
+        captureBtn.style.display = "none";
+      }
     });
 
     this.#map = L.map("location-map").setView([-6.2, 106.816666], 5);
@@ -93,8 +113,21 @@ export default class AddPage {
       .getElementById("add-form")
       .addEventListener("submit", async (e) => {
         e.preventDefault();
-        if (!photoBlob) {
-          alert("Silakan ambil foto menggunakan kamera terlebih dahulu.");
+
+        let fileToUpload = null;
+
+        if (fileUpload.files && fileUpload.files.length > 0) {
+          fileToUpload = fileUpload.files[0];
+        } else if (photoBlob) {
+          fileToUpload = new File([photoBlob], "story-photo.jpg", {
+            type: "image/jpeg",
+          });
+        }
+
+        if (!fileToUpload) {
+          alert(
+            "Silakan pilih file atau ambil foto menggunakan kamera terlebih dahulu.",
+          );
           return;
         }
 
@@ -102,13 +135,9 @@ export default class AddPage {
         btn.disabled = true;
         btn.innerText = "Mengirim Data...";
 
-        const file = new File([photoBlob], "story-photo.jpg", {
-          type: "image/jpeg",
-        });
-
         const data = {
           description: document.getElementById("description").value,
-          photo: file,
+          photo: fileToUpload,
           lat: document.getElementById("lat").value,
           lon: document.getElementById("lon").value,
         };

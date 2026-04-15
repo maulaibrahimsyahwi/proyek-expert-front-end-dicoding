@@ -24,7 +24,7 @@ class Api {
   }
 
   static async getStories() {
-    const response = await fetch(`${BASE_URL}/stories`, {
+    const response = await fetch(`${BASE_URL}/stories?location=1`, {
       headers: { Authorization: `Bearer ${this.getAuthToken()}` },
     });
     return response.json();
