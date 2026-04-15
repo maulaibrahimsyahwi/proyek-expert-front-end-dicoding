@@ -1,16 +1,31 @@
 * {
   margin: 0;
   padding: 0;
-
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background-color: #000;
+  color: white;
+  padding: 8px;
+  z-index: 10000;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
 }
 
 .container {
-  padding-inline: 32px;
+  padding-inline: 16px;
   margin-inline: auto;
   max-width: 1300px;
 }
@@ -20,13 +35,10 @@ header {
 }
 
 .main-header {
-  min-height: 90px;
-  padding-block: 20px;
-
+  min-height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 30px;
 }
 
 .brand-name {
@@ -37,93 +49,160 @@ header {
 }
 
 .navigation-drawer {
-  min-height: 100vh;
-  width: 200px;
-  padding: 20px 10px;
-  background-color: #fff;
-
   position: fixed;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-
-  box-shadow: 0 0 4px 2px #00000033;
-  transform: translateX(-100%);
-  transition: transform 350ms;
-
+  top: 0;
+  left: -100%;
+  width: 250px;
+  height: 100vh;
+  background-color: #fff;
+  transition: transform 0.3s ease-in-out;
   z-index: 9999;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .navigation-drawer.open {
-  transform: translateX(0);
+  transform: translateX(100%);
 }
 
 .drawer-button {
-  padding: 8px;
-  border: 0;
-  border-radius: 4px;
-
-  display: inline-block;
-  background-color: transparent;
-
-  font-weight: bold;
-  font-size: 28px;
-  color: #141e16;
-
+  background: none;
+  border: none;
+  font-size: 24px;
   cursor: pointer;
+  padding: 10px;
 }
 
 .nav-list {
   list-style: none;
-
   display: flex;
   flex-direction: column;
-  gap: 10px 20px;
+  gap: 15px;
 }
 
-.nav-list li a {
-  padding: 6px 10px;
-
-  display: block;
-  
-  color: #333;
+.nav-list li a,
+.nav-list li button {
   text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
 }
 
-.nav-list li a:hover {
-  text-decoration: underline;
-}
-
-/* MAIN */
 .main-content {
   padding-block: 20px;
+  min-height: 80vh;
 }
 
-/* Write your styles more here */
+.map-container {
+  height: 400px;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
 
-@media screen and (width > 1000px) {
-  .navigation-drawer {
-    min-height: auto;
-    width: auto;
-    padding: 0;
-    background-color: transparent;
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
 
-    flex-direction: row;
-    justify-content: space-between;
+.story-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
 
-    position: static;
-    box-shadow: none;
-    transform: translateX(0);
+.story-card:focus,
+.story-card:hover {
+  transform: translateY(-5px);
+  outline: 2px solid lightskyblue;
+}
+
+.story-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: lightskyblue;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+video {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+}
+
+@media screen and (min-width: 375px) {
+  .container {
+    padding-inline: 20px;
   }
+}
 
-  .nav-list {
-    flex-direction: row;
+@media screen and (min-width: 768px) {
+  .story-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-
-  .nav-list li a {
-    display: inline-block;
+  .map-container {
+    height: 500px;
   }
+}
 
+@media screen and (min-width: 1024px) {
   .drawer-button {
     display: none;
+  }
+  .navigation-drawer {
+    position: static;
+    width: auto;
+    height: auto;
+    transform: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+  .nav-list {
+    flex-direction: row;
+    gap: 20px;
+  }
+  .story-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .home-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
   }
 }
