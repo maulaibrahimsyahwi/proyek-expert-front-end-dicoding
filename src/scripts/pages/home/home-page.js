@@ -1,7 +1,13 @@
 import L from "leaflet";
-import Api from "../../data/api";
+import HomePresenter from "./home-presenter";
 
 export default class HomePage {
+  constructor() {
+    this._presenter = new HomePresenter({ view: this });
+    this._map = null;
+    this._markers = {};
+  }
+
   async render() {
     return `
       <section class="container home-layout">
@@ -18,7 +24,12 @@ export default class HomePage {
   }
 
   async afterRender() {
-    const map = L.map("map").setView([-6.2, 106.816666], 5);
+    this._initMap();
+    await this._presenter.getAllStories();
+  }
+
+  _initMap() {
+    this._map = L.map("map").setView([-6.2, 106.816666], 5);
 
     const osmLayer = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -33,59 +44,68 @@ export default class HomePage {
       },
     );
 
-    osmLayer.addTo(map);
+    osmLayer.addTo(this._map);
     L.control
-      .layers({ "Peta Jalan (OSM)": osmLayer, Topografi: topoLayer })
-      .addTo(map);
+      .layers({ "Peta Jalan": osmLayer, Topografi: topoLayer })
+      .addTo(this._map);
 
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 100);
+    setTimeout(() => this._map.invalidateSize(), 100);
+  }
 
-    try {
-      const response = await Api.getStories();
-      const listContainer = document.getElementById("story-list");
-      listContainer.innerHTML = "";
+  showStories(stories) {
+    const listContainer = document.getElementById("story-list");
+    listContainer.innerHTML = "";
 
-      response.listStory.forEach((story) => {
-        let marker = null;
+    stories.forEach((story) => {
+      if (story.lat && story.lon) {
+        const marker = L.marker([story.lat, story.lon]).addTo(this._map);
+        marker.bindPopup(`
+          <div style="text-align: center;">
+            <img src="${story.photoUrl}" alt="Foto ${story.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">
+            <br><strong>${story.name}</strong>
+          </div>
+        `);
+        this._markers[story.id] = marker;
+      }
 
-        if (story.lat && story.lon) {
-          marker = L.marker([story.lat, story.lon]).addTo(map);
-          marker.bindPopup(`
-            <div style="text-align: center;">
-              <img src="${story.photoUrl}" alt="Foto ${story.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">
-              <br><strong>${story.name}</strong>
-            </div>
-          `);
-        }
-
-        const card = document.createElement("div");
-        card.className = "story-card";
-        card.tabIndex = 0;
-        card.setAttribute("aria-label", `Cerita dari ${story.name}`);
-        card.innerHTML = `
-          <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}">
+      const card = document.createElement("div");
+      card.className = "story-card";
+      card.tabIndex = 0;
+      card.setAttribute("aria-label", `Cerita dari ${story.name}`);
+      card.innerHTML = `
+        <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}">
+        <div class="card-body">
           <h3>${story.name}</h3>
           <p>${story.description.substring(0, 60)}...</p>
-        `;
+        </div>
+      `;
 
-        card.addEventListener("click", () => {
-          if (marker) {
-            map.flyTo([story.lat, story.lon], 12);
-            marker.openPopup();
-          }
-        });
-
-        card.addEventListener("keypress", (e) => {
-          if (e.key === "Enter") card.click();
-        });
-
-        listContainer.appendChild(card);
+      card.addEventListener("click", () => this._handleCardClick(story));
+      card.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") this._handleCardClick(story);
       });
-    } catch (error) {
-      document.getElementById("story-list").innerHTML =
-        "<p>Gagal memuat cerita.</p>";
+
+      listContainer.appendChild(card);
+    });
+  }
+
+  _handleCardClick(story) {
+    const marker = this._markers[story.id];
+    if (marker) {
+      this._map.flyTo([story.lat, story.lon], 12);
+      marker.openPopup();
+
+      const icon = marker.getElement();
+      if (icon) {
+        icon.classList.add("marker-active");
+        setTimeout(() => icon.classList.remove("marker-active"), 2000);
+      }
     }
+  }
+
+  showErrorMessage() {
+    const listContainer = document.getElementById("story-list");
+    listContainer.innerHTML =
+      "<p>Gagal memuat cerita. Silakan coba lagi nanti.</p>";
   }
 }

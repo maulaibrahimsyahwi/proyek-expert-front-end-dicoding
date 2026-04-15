@@ -7,59 +7,103 @@ export default class AddPage {
 
   async render() {
     return `
-      <section class="container">
+      <section class="container" style="max-width: 800px;">
         <h2>Tambah Cerita Baru</h2>
         <form id="add-form">
           
-          <div class="form-group">
-            <label for="file-upload">Upload Foto</label>
-            <input type="file" id="file-upload" accept="image/*" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          <div class="form-group" id="media-selection-container">
+            <label style="font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">1. Pilih Foto</label>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 16px; background: var(--bg-body); padding: 16px; border-radius: var(--radius-md); border: 1px dashed var(--border);">
+              <div>
+                <label for="file-upload" style="font-weight: normal; color: var(--text-muted); margin-bottom: 8px; display: block;">Unggah dari Perangkat</label>
+                <input type="file" id="file-upload" accept="image/*">
+              </div>
+              
+              <div style="text-align: center; color: var(--text-muted); font-weight: bold;">ATAU</div>
+              
+              <div>
+                <button type="button" id="start-camera-btn" class="btn" style="width: 100%; background-color: var(--primary-hover);">Buka Kamera Langsung</button>
+              </div>
+            </div>
           </div>
 
-          <p style="text-align: center; margin: 10px 0; font-weight: bold;">ATAU</p>
-
-          <div class="form-group">
-            <label>Foto Cerita (Kamera Langsung)</label>
-            <video id="camera-view" autoplay playsinline aria-label="Tampilan Kamera" style="width: 100%; border-radius: 8px; background: #000; height: 300px; object-fit: cover;"></video>
+          <div id="camera-container" class="form-group" style="display: none; background: #000; padding: 16px; border-radius: var(--radius-md);">
+            <video id="camera-view" autoplay playsinline style="width: 100%; max-height: 400px; border-radius: 8px; object-fit: cover;"></video>
             <canvas id="camera-canvas" style="display:none;"></canvas>
-            <button type="button" id="capture-btn" class="btn" style="margin-top:10px;">Ambil Foto</button>
-            <img id="photo-preview" alt="Pratinjau foto" style="display:none; width:100%; max-height: 300px; object-fit: cover; border-radius:8px; margin-top:10px;">
+            <button type="button" id="capture-btn" class="btn" style="width: 100%; margin-top: 16px; background-color: #22c55e;">Ambil Foto Ini</button>
+            <button type="button" id="stop-camera-btn" class="btn" style="width: 100%; margin-top: 8px; background-color: #ef4444;">Batal / Tutup Kamera</button>
+          </div>
+
+          <div id="preview-container" class="form-group" style="display: none;">
+            <label>Pratinjau Foto</label>
+            <img id="photo-preview" alt="Pratinjau foto" style="width:100%; max-height: 400px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <button type="button" id="reset-photo-btn" class="btn" style="width: 100%; margin-top: 10px; background-color: #ef4444;">Hapus / Ganti Foto</button>
           </div>
           
-          <div class="form-group">
-            <label for="description">Deskripsi Cerita</label>
-            <textarea id="description" rows="4" required aria-required="true" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;"></textarea>
+          <div class="form-group" style="margin-top: 32px;">
+            <label for="description" style="font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">2. Deskripsi Cerita</label>
+            <textarea id="description" rows="4" required aria-required="true" placeholder="Ceritakan sesuatu tentang foto ini..."></textarea>
           </div>
 
-          <div class="form-group">
-            <label>Pilih Lokasi di Peta</label>
-            <div id="location-map" class="map-container" tabindex="0" aria-label="Peta pemilihan lokasi cerita"></div>
+          <div class="form-group" style="margin-top: 32px;">
+            <label style="font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">3. Lokasi (Opsional)</label>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">Klik pada peta untuk menyematkan lokasi cerita Anda.</p>
+            <div id="location-map" class="map-container" tabindex="0" aria-label="Peta pemilihan lokasi cerita" style="height: 300px; cursor: crosshair;"></div>
             <input type="hidden" id="lat">
             <input type="hidden" id="lon">
           </div>
 
-          <button type="submit" class="btn" id="submit-btn" style="width: 100%; padding: 12px; font-size: 16px;">Kirim Cerita</button>
+          <button type="submit" class="btn" id="submit-btn" style="width: 100%; padding: 16px; font-size: 1.1rem; margin-top: 24px;">Kirim Cerita Sekarang</button>
         </form>
       </section>
     `;
   }
 
   async afterRender() {
+    const mediaSelectionContainer = document.getElementById(
+      "media-selection-container",
+    );
+    const cameraContainer = document.getElementById("camera-container");
+    const previewContainer = document.getElementById("preview-container");
+
+    const startCameraBtn = document.getElementById("start-camera-btn");
+    const stopCameraBtn = document.getElementById("stop-camera-btn");
     const video = document.getElementById("camera-view");
     const canvas = document.getElementById("camera-canvas");
-    const photoPreview = document.getElementById("photo-preview");
     const captureBtn = document.getElementById("capture-btn");
+
     const fileUpload = document.getElementById("file-upload");
+    const photoPreview = document.getElementById("photo-preview");
+    const resetPhotoBtn = document.getElementById("reset-photo-btn");
+
     let photoBlob = null;
 
-    try {
-      this.#mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-      video.srcObject = this.#mediaStream;
-    } catch (err) {
-      alert("Kamera tidak dapat diakses.");
-    }
+    startCameraBtn.addEventListener("click", async () => {
+      try {
+        this.#mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+        video.srcObject = this.#mediaStream;
+        mediaSelectionContainer.style.display = "none";
+        cameraContainer.style.display = "block";
+      } catch (err) {
+        alert("Kamera tidak dapat diakses atau izin ditolak.");
+      }
+    });
+
+    const stopCamera = () => {
+      if (this.#mediaStream) {
+        this.#mediaStream.getTracks().forEach((track) => track.stop());
+        this.#mediaStream = null;
+      }
+    };
+
+    stopCameraBtn.addEventListener("click", () => {
+      stopCamera();
+      cameraContainer.style.display = "none";
+      mediaSelectionContainer.style.display = "block";
+    });
 
     captureBtn.addEventListener("click", () => {
       if (!this.#mediaStream) return;
@@ -71,9 +115,10 @@ export default class AddPage {
         (blob) => {
           photoBlob = blob;
           photoPreview.src = URL.createObjectURL(blob);
-          photoPreview.style.display = "block";
-          video.style.display = "none";
-          captureBtn.style.display = "none";
+
+          stopCamera();
+          cameraContainer.style.display = "none";
+          previewContainer.style.display = "block";
           fileUpload.value = "";
         },
         "image/jpeg",
@@ -85,10 +130,17 @@ export default class AddPage {
       if (e.target.files && e.target.files[0]) {
         photoBlob = null;
         photoPreview.src = URL.createObjectURL(e.target.files[0]);
-        photoPreview.style.display = "block";
-        video.style.display = "none";
-        captureBtn.style.display = "none";
+        mediaSelectionContainer.style.display = "none";
+        previewContainer.style.display = "block";
       }
+    });
+
+    resetPhotoBtn.addEventListener("click", () => {
+      photoBlob = null;
+      fileUpload.value = "";
+      photoPreview.src = "";
+      previewContainer.style.display = "none";
+      mediaSelectionContainer.style.display = "block";
     });
 
     this.#map = L.map("location-map").setView([-6.2, 106.816666], 5);
@@ -153,7 +205,7 @@ export default class AddPage {
           alert("Gagal mengirim cerita ke server.");
         } finally {
           btn.disabled = false;
-          btn.innerText = "Kirim Cerita";
+          btn.innerText = "Kirim Cerita Sekarang";
         }
       });
   }
