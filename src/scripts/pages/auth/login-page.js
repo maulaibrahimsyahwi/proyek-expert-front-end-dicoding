@@ -4,7 +4,7 @@ export default class LoginPage {
   async render() {
     return `
       <section class="container">
-        <h2>Masuk ke Story App</h2>
+        <h1>Masuk ke Story App</h1>
         <form id="login-form">
           <div class="form-group">
             <label for="email">Email</label>

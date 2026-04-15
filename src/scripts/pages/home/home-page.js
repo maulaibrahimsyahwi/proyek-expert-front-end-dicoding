@@ -1,5 +1,6 @@
 import L from "leaflet";
 import HomePresenter from "./home-presenter";
+import { showFormattedDate } from "../../utils/index";
 
 export default class HomePage {
   constructor() {
@@ -10,16 +11,19 @@ export default class HomePage {
 
   async render() {
     return `
-      <section class="container home-layout">
-        <div class="map-section">
-          <h2>Peta Sebaran Cerita</h2>
-          <div id="map" class="map-container" tabindex="0" aria-label="Peta interaktif sebaran cerita"></div>
-        </div>
-        <div class="list-section">
-          <h2>Daftar Cerita</h2>
-          <div id="story-list" class="story-grid"></div>
-        </div>
-      </section>
+      <div class="container">
+        <h1 style="margin-bottom: 24px; font-size: 2rem;">Beranda StoryApp</h1>
+        <section class="home-layout">
+          <div class="map-section">
+            <h2>Peta Sebaran Cerita</h2>
+            <div id="map" class="map-container" tabindex="0" aria-label="Peta interaktif sebaran cerita"></div>
+          </div>
+          <div class="list-section">
+            <h2>Daftar Cerita</h2>
+            <div id="story-list" class="story-grid"></div>
+          </div>
+        </section>
+      </div>
     `;
   }
 
@@ -46,7 +50,7 @@ export default class HomePage {
 
     osmLayer.addTo(this._map);
     L.control
-      .layers({ "Peta Jalan": osmLayer, Topografi: topoLayer })
+      .layers({ "Peta Jalan": osmLayer, "Topografi": topoLayer })
       .addTo(this._map);
 
     setTimeout(() => this._map.invalidateSize(), 100);
@@ -76,6 +80,7 @@ export default class HomePage {
         <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}">
         <div class="card-body">
           <h3>${story.name}</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">${showFormattedDate(story.createdAt)}</p>
           <p>${story.description.substring(0, 60)}...</p>
         </div>
       `;

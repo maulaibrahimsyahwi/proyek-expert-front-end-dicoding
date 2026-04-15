@@ -8,7 +8,7 @@ export default class AddPage {
   async render() {
     return `
       <section class="container" style="max-width: 800px;">
-        <h2>Tambah Cerita Baru</h2>
+        <h1>Tambah Cerita Baru</h1>
         <form id="add-form">
           
           <div class="form-group" id="media-selection-container">

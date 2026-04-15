@@ -4,7 +4,7 @@ export default class RegisterPage {
   async render() {
     return `
       <section class="container" style="max-width: 400px; margin-top: 50px;">
-        <h2>Daftar Akun StoryApp</h2>
+        <h1>Daftar Akun StoryApp</h1>
         <form id="register-form">
           <div class="form-group">
             <label for="name">Nama</label>
