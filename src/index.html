@@ -4,6 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -15,12 +27,38 @@
     <a href="#main-content" class="skip-link">Lewati ke konten</a>
     <header>
       <div class="main-header container">
-        <a class="brand-name" href="#/">StoryApp</a>
+        <a class="brand-name" href="#/">
+          <i
+            class="fa-solid fa-book-open"
+            style="font-size: 24px; color: var(--primary)"
+          ></i>
+          StoryApp
+        </a>
         <nav id="navigation-drawer" class="navigation-drawer">
           <ul id="nav-list" class="nav-list">
-            <li><a href="#/">Beranda</a></li>
-            <li><a href="#/add">Tambah Cerita</a></li>
-            <li><button id="logout-btn">Keluar</button></li>
+            <li>
+              <a href="#/"> <i class="fa-solid fa-house"></i> Beranda </a>
+            </li>
+            <li>
+              <a href="#/add">
+                <i class="fa-solid fa-circle-plus"></i> Tambah Cerita
+              </a>
+            </li>
+            <li>
+              <a href="#/favorite">
+                <i class="fa-solid fa-heart"></i> Favorit
+              </a>
+            </li>
+            <li>
+              <button id="push-toggle">
+                <i class="fa-solid fa-bell"></i> Aktifkan Notifikasi
+              </button>
+            </li>
+            <li>
+              <button id="logout-btn" class="logout-style">
+                <i class="fa-solid fa-right-from-bracket"></i> Keluar
+              </button>
+            </li>
           </ul>
         </nav>
         <button
@@ -28,7 +66,7 @@
           class="drawer-button"
           aria-label="Buka menu navigasi"
         >
-          ☰
+          <i class="fa-solid fa-bars" style="font-size: 24px"></i>
         </button>
       </div>
     </header>
