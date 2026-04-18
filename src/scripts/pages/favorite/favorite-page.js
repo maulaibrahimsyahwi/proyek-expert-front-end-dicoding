@@ -5,10 +5,10 @@ export default class FavoritePage {
   async render() {
     return `
       <div class="container">
-        <h1>Cerita Favorit</h1>
+        <h1><i class="fa-solid fa-heart" style="font-size: 28px; color: #ef4444;"></i> Cerita Favorit</h1>
         <div class="form-group" style="margin-bottom: 32px;">
           <label for="search-favorite">Cari Cerita Favorit Anda</label>
-          <input type="text" id="search-favorite" placeholder="Ketik judul cerita..." aria-label="Cari cerita favorit">
+          <input type="text" id="search-favorite" placeholder="Cari cerita favorit..." aria-label="Cari cerita favorit">
         </div>
         <div id="favorite-list" class="story-grid"></div>
       </div>
@@ -49,7 +49,7 @@ export default class FavoritePage {
       card.innerHTML = `
         <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}">
         <div class="card-body">
-          <h3>${story.name}</h3>
+          <h2 style="font-size: 1.1rem; margin-bottom: 6px;">${story.name}</h2>
           <p class="story-meta">
             <i class="fa-regular fa-calendar-days"></i> ${showFormattedDate(story.createdAt)}
           </p>

@@ -54,7 +54,13 @@ class Api {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.getAuthToken()}`,
       },
-      body: JSON.stringify(subscription),
+      body: JSON.stringify({
+        endpoint: subscription.endpoint,
+        keys: {
+          auth: subscription.keys.auth,
+          p256dh: subscription.keys.p256dh,
+        },
+      }),
     });
     return response.json();
   }
