@@ -49,7 +49,7 @@ export default class FavoritePage {
       card.innerHTML = `
         <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}">
         <div class="card-body">
-          <h2 style="font-size: 1.1rem; margin-bottom: 6px;">${story.name}</h2>
+          <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 6px;">${story.name}</h2>
           <p class="story-meta">
             <i class="fa-regular fa-calendar-days"></i> ${showFormattedDate(story.createdAt)}
           </p>
