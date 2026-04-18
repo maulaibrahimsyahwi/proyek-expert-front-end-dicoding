@@ -5,7 +5,7 @@ export default class FavoritePage {
   async render() {
     return `
       <div class="container">
-        <h1><i class="fa-solid fa-heart" style="font-size: 28px; color: #ef4444;"></i> Cerita Favorit</h1>
+        <h1>Cerita Favorit</h1>
         <div class="form-group" style="margin-bottom: 32px;">
           <input type="text" id="search-favorite" placeholder="Cari cerita favorit..." aria-label="Cari cerita favorit">
         </div>

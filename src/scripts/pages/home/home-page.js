@@ -12,15 +12,15 @@ export default class HomePage {
   async render() {
     return `
       <div class="container">
-        <h1><i class="fa-regular fa-compass" style="font-size: 28px; color: var(--primary);"></i> Eksplorasi Cerita</h1>
+        <h1>Eksplorasi Cerita</h1>
         <section class="home-layout">
           <div class="map-section">
-            <h2 style="font-size: 1.25rem;"><i class="fa-solid fa-map-location-dot"></i> Peta Sebaran Cerita</h2>
+            <h2>Peta Sebaran Cerita</h2>
             <div id="map" class="map-container" tabindex="0" aria-label="Peta interaktif sebaran cerita"></div>
           </div>
           <div class="list-section">
-            <h2 style="font-size: 1.25rem;"><i class="fa-solid fa-list"></i> Daftar Cerita</h2>
-            <div id="story-list" class="story-grid scrollable-list" style="grid-template-columns: 1fr;"></div>
+            <h2>Daftar Cerita</h2>
+            <div id="story-list" class="story-grid scrollable-list"></div>
           </div>
         </section>
       </div>
@@ -29,6 +29,7 @@ export default class HomePage {
 
   async afterRender() {
     this._initMap();
+    this.showLoading();
     await this._presenter.getAllStories();
   }
 
@@ -53,6 +54,26 @@ export default class HomePage {
     setTimeout(() => this._map.invalidateSize(), 100);
   }
 
+  showLoading() {
+    const listContainer = document.getElementById("story-list");
+    listContainer.innerHTML = Array(4)
+      .fill(
+        `
+        <div class="story-card">
+          <div class="skeleton skeleton-img"></div>
+          <div class="card-body">
+            <div class="skeleton" style="height: 24px; width: 60%; margin-bottom: 12px;"></div>
+            <div class="skeleton" style="height: 16px; width: 40%; margin-bottom: 24px;"></div>
+            <div class="skeleton" style="height: 14px; width: 100%; margin-bottom: 8px;"></div>
+            <div class="skeleton" style="height: 14px; width: 80%; margin-bottom: 24px;"></div>
+            <div class="skeleton" style="height: 48px; width: 100%; border-radius: var(--radius-md);"></div>
+          </div>
+        </div>
+      `,
+      )
+      .join("");
+  }
+
   showStories(stories) {
     const listContainer = document.getElementById("story-list");
     listContainer.innerHTML = "";
@@ -62,8 +83,8 @@ export default class HomePage {
         const marker = L.marker([story.lat, story.lon]).addTo(this._map);
         marker.bindPopup(`
           <div style="text-align: center;">
-            <img src="${story.photoUrl}" alt="Foto ${story.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
-            <br><strong style="font-family: 'Inter', sans-serif;">${story.name}</strong>
+            <img src="${story.photoUrl}" alt="Foto ${story.name}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow-sm);">
+            <br><strong style="font-family: 'Inter', sans-serif; font-size: 1.1rem; color: var(--text-main);">${story.name}</strong>
           </div>
         `);
         this._markers[story.id] = marker;
@@ -74,13 +95,13 @@ export default class HomePage {
       card.tabIndex = 0;
       card.setAttribute("aria-label", `Cerita dari ${story.name}`);
       card.innerHTML = `
-        <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}">
+        <img src="${story.photoUrl}" alt="Foto cerita dari ${story.name}" loading="lazy">
         <div class="card-body">
           <h3>${story.name}</h3>
           <p class="story-meta">
             <i class="fa-regular fa-calendar-days"></i> ${showFormattedDate(story.createdAt)}
           </p>
-          <p class="story-desc">${story.description.substring(0, 80)}...</p>
+          <p class="story-desc">${story.description.substring(0, 100)}...</p>
         </div>
       `;
 
@@ -95,6 +116,7 @@ export default class HomePage {
         await idb.put(STORE_FAVORITE, story);
         favBtn.innerHTML = `<i class="fa-solid fa-heart" style="color: #ef4444;"></i> Tersimpan`;
         favBtn.style.borderColor = "#ef4444";
+        favBtn.style.backgroundColor = "#fef2f2";
       });
 
       card.querySelector(".card-body").appendChild(favBtn);
@@ -110,7 +132,10 @@ export default class HomePage {
   _handleCardClick(story) {
     const marker = this._markers[story.id];
     if (marker) {
-      this._map.flyTo([story.lat, story.lon], 12);
+      this._map.flyTo([story.lat, story.lon], 13, {
+        animate: true,
+        duration: 1.5,
+      });
       marker.openPopup();
       const icon = marker.getElement();
       if (icon) {
@@ -122,6 +147,12 @@ export default class HomePage {
 
   showErrorMessage() {
     const listContainer = document.getElementById("story-list");
-    listContainer.innerHTML = `<p style="display:flex; align-items:center; gap:8px; color:#ef4444;"><i class="fa-solid fa-circle-exclamation"></i> Gagal memuat cerita. Silakan coba lagi nanti.</p>`;
+    listContainer.innerHTML = `
+      <div style="background-color: #fef2f2; border: 1px solid #f87171; padding: 24px; border-radius: var(--radius-md); text-align: center;">
+        <i class="fa-solid fa-circle-exclamation" style="font-size: 32px; color: #ef4444; margin-bottom: 12px;"></i>
+        <h3 style="color: #991b1b; margin-bottom: 8px;">Gagal Memuat Cerita</h3>
+        <p style="color: #b91c1c;">Silakan periksa koneksi internet Anda dan coba lagi nanti.</p>
+      </div>
+    `;
   }
 }
