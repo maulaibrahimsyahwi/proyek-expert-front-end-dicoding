@@ -7,7 +7,8 @@ export default class FavoritePage {
       <div class="container">
         <h1>Cerita Favorit</h1>
         <div class="form-group" style="margin-bottom: 32px;">
-          <input type="text" id="search-favorite" placeholder="Cari cerita favorit..." aria-label="Cari cerita favorit">
+          <label for="search-favorite">Cari Cerita Favorit Anda</label>
+          <input type="text" id="search-favorite" placeholder="Ketik judul cerita..." aria-label="Cari cerita favorit">
         </div>
         <div id="favorite-list" class="story-grid"></div>
       </div>

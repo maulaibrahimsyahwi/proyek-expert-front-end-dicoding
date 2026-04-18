@@ -1,5 +1,6 @@
 import "../styles/styles.css";
 import App from "./pages/app";
+import Api from "./data/api";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const app = new App({
@@ -29,29 +30,45 @@ async function setupPushToggle(registration) {
   let isSubscribed = subscription !== null;
 
   const updateBtnText = () => {
-    toggleBtn.innerText = isSubscribed
-      ? "Matikan Notifikasi"
-      : "Aktifkan Notifikasi";
+    toggleBtn.innerHTML = isSubscribed
+      ? `<i class="fa-solid fa-bell-slash"></i> Matikan Notifikasi`
+      : `<i class="fa-solid fa-bell"></i> Aktifkan Notifikasi`;
   };
 
   updateBtnText();
 
   toggleBtn.addEventListener("click", async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert(
+        "Silakan masuk/login terlebih dahulu untuk mengaktifkan notifikasi.",
+      );
+      return;
+    }
+
     if (isSubscribed) {
       const sub = await registration.pushManager.getSubscription();
-      if (sub) await sub.unsubscribe();
+      if (sub) {
+        const endpoint = sub.endpoint;
+        await sub.unsubscribe();
+        await Api.unsubscribePushNotification(endpoint);
+      }
       isSubscribed = false;
     } else {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         const applicationServerKey = urlB64ToUint8Array(
-          "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U",
+          "BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk",
         );
-        await registration.pushManager.subscribe({
+        const pushSubscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey,
         });
+
+        await Api.subscribePushNotification(pushSubscription.toJSON());
         isSubscribed = true;
+      } else {
+        alert("Izin notifikasi ditolak oleh browser.");
       }
     }
     updateBtnText();

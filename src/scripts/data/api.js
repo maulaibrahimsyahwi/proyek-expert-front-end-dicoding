@@ -46,6 +46,30 @@ class Api {
     });
     return response.json();
   }
+
+  static async subscribePushNotification(subscription) {
+    const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.getAuthToken()}`,
+      },
+      body: JSON.stringify(subscription),
+    });
+    return response.json();
+  }
+
+  static async unsubscribePushNotification(endpoint) {
+    const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.getAuthToken()}`,
+      },
+      body: JSON.stringify({ endpoint }),
+    });
+    return response.json();
+  }
 }
 
 export default Api;
